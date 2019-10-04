@@ -1,13 +1,40 @@
 #include <iostream>
 #include "life_game.hpp"
 
+bool LifeGame::map[WIDTH][HEIGHT] = {0};
 
-// Point map[WIDTH * HEIGHT] = {0};
+LifeGame::LifeGame()
+{
 
-bool map[WIDTH][HEIGHT] = {0};
+}
+
+LifeGame::~LifeGame()
+{
+
+}
+
+void LifeGame::setMapStatus(Point point, bool status)
+{
+    map[point.x][point.y] = status;
+}
+
+void LifeGame::setMapStatus(int x, int y, bool status)
+{
+    map[x][y] = status;
+}
+
+bool LifeGame::getMapStatus(Point point)
+{
+    return map[point.x][point.y];
+}
+
+bool LifeGame::getMapStatus(int x, int y)
+{
+    return map[x][y];
+}
 
 //该函数不能计算边界点周围点的数量
-int getNumAround(Point point)
+int LifeGame::getNumAround(Point point)
 {
     int cnt = 0;
 
@@ -28,7 +55,7 @@ int getNumAround(Point point)
     return cnt;
 }
 
-bool survivalRule(Point point)
+bool LifeGame::survivalRule(Point point)
 {
 
     int sum = getNumAround(point);
@@ -48,7 +75,7 @@ bool survivalRule(Point point)
     return res;
 }
 
-void upedateMap(void)
+void LifeGame::iteration(void)
 {
     Point tmp_point;
     bool tmp_map[WIDTH][HEIGHT] = {0};
@@ -62,14 +89,6 @@ void upedateMap(void)
         }
     }
 
-    //更新地图数组
-    // for(int i = 0; i < WIDTH; i++)
-    // {
-    //     for(int j = 0; j < HEIGHT; j++)
-    //     {
-    //         map[i][j] = 0;
-    //     }
-    // }
     for(int i = 0; i < WIDTH; i++)
     {
         for(int j = 0; j < HEIGHT; j++)

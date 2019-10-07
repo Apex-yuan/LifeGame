@@ -53,7 +53,7 @@
 # 第四层：通配符 $^ 所有的依赖文件  $@ 所有的目标文件 $< 所有的依赖文件的第一个文件
 # example:
 TAR = life
-OBJ = main.o life_game.o draw.o
+OBJ = main.o life_game.o draw.o map.o
 CC := g++
 LIB = -lGL -lGLU -lglut
 

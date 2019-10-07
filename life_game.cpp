@@ -1,7 +1,7 @@
 #include <iostream>
 #include "life_game.hpp"
+#include "map.h"
 
-bool LifeGame::map[WIDTH][HEIGHT] = {0};
 
 LifeGame::LifeGame()
 {
@@ -13,28 +13,8 @@ LifeGame::~LifeGame()
 
 }
 
-void LifeGame::setMapStatus(Point point, bool status)
-{
-    map[point.x][point.y] = status;
-}
-
-void LifeGame::setMapStatus(int x, int y, bool status)
-{
-    map[x][y] = status;
-}
-
-bool LifeGame::getMapStatus(Point point)
-{
-    return map[point.x][point.y];
-}
-
-bool LifeGame::getMapStatus(int x, int y)
-{
-    return map[x][y];
-}
-
 //该函数不能计算边界点周围点的数量
-int LifeGame::getNumAround(Point point)
+int LifeGame::getNumAround(Map & map, Point point)
 {
     int cnt = 0;
 
@@ -42,23 +22,25 @@ int LifeGame::getNumAround(Point point)
     {
         for(int j = point.y - 1; j <= point.y + 1; ++j)
         {
-            if(map[i][j] == true)
+            // if(map[i][j] == true)
+            if(map.getValue(i,j) == true)
             {
                 cnt++;
             }
         }
     }
-    if(map[point.x][point.y] == true)
+    // if(map[point.x][point.y] == true)
+    if(map.getValue(point) == true)
     {
         cnt -= 1;
     }
     return cnt;
 }
 
-bool LifeGame::survivalRule(Point point)
+bool LifeGame::survivalRule(Map &map, Point point)
 {
 
-    int sum = getNumAround(point);
+    int sum = getNumAround(map, point);
     bool res = false;
     if(sum < 2 || sum >3)
     {
@@ -70,30 +52,31 @@ bool LifeGame::survivalRule(Point point)
     }
     else if(sum == 2)
     {
-        res = map[point.x][point.y];
+        // res = map[point.x][point.y];
+        res = map.getValue(point);
     }
     return res;
 }
 
-void LifeGame::iteration(void)
+void LifeGame::iteration(Map &map)
 {
     Point tmp_point;
-    bool tmp_map[WIDTH][HEIGHT] = {0};
+    Map tmp_map;
 
     //根据生命游戏规则将计算结果存入临时地图
-    for(tmp_point.x = 1; tmp_point.x < WIDTH - 1; ++tmp_point.x)
+    for(tmp_point.x = 1; tmp_point.x < tmp_map.getWidth() - 1; ++tmp_point.x)
     {
-        for(tmp_point.y = 1; tmp_point.y < HEIGHT - 1; ++tmp_point.y)
+        for(tmp_point.y = 1; tmp_point.y < tmp_map.getHeight() - 1; ++tmp_point.y)
         {
-            tmp_map[tmp_point.x][tmp_point.y] = survivalRule(tmp_point);
+            tmp_map.setValue(tmp_point, survivalRule(map, tmp_point));
         }
     }
 
-    for(int i = 0; i < WIDTH; i++)
+    for(int i = 0; i < map.getWidth(); i++)
     {
-        for(int j = 0; j < HEIGHT; j++)
+        for(int j = 0; j < map.getHeight(); j++)
         {
-            map[i][j] = tmp_map[i][j];
+            map.setValue(i,j,tmp_map.getValue(i, j));
         }
     }
 }

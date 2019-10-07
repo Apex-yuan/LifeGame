@@ -4,10 +4,11 @@
 #include <GL/glut.h>
 #include "point.h"
 
-#define WINDOW_WIDTH  800//1855//3296 //800
-#define WINDOW_HEIGHT 600//1056//1082 //600
-#define POINT_SIZE    10.0f  //像素
 #define MESH_SIZE     10
+#define WINDOW_WIDTH  (80 * MESH_SIZE)
+#define WINDOW_HEIGHT (60 * MESH_SIZE) 
+#define POINT_SIZE    10.0f  //像素
+
 
 #define GLUT_WHEEL_UP    3
 #define GLUT_WHEEL_DOWN  4
@@ -22,7 +23,7 @@ class Draw
     Draw();
     ~Draw();
     void drawMap(void);
-    void drawMesh(int mesh_size_);
+    void drawMesh(float mesh_size_);
     void display(void);
     void onMouse(int button,int state,int x,int y);
     void onMotion(int x, int y);

@@ -48,23 +48,43 @@ Draw::~Draw()
     
 }
 
-void Draw::drawMesh(int mesh_size_)
+void Draw::drawMesh(float mesh_size_)
 {
     glClear(GL_COLOR_BUFFER_BIT);
     glColor3f(0.10, 0.10, 0.10);
+    glLineWidth(1);
     glBegin(GL_LINES);
     //横向
-    for(int i = -WINDOW_HEIGHT/2 + mesh_size_/2; i <= WINDOW_HEIGHT/2; i += mesh_size_)
+    for(float i = 0; i <= WINDOW_HEIGHT/2; i += mesh_size_)
+    {
+        glVertex2f(-WINDOW_WIDTH/2, i);
+        glVertex2f(WINDOW_WIDTH/2, i);
+    }
+    for(float i = 0; i >= -WINDOW_HEIGHT/2; i -= mesh_size_)
     {
         glVertex2f(-WINDOW_WIDTH/2, i);
         glVertex2f(WINDOW_WIDTH/2, i);
     }
     //纵向
-    for(int i = -WINDOW_WIDTH/2 + mesh_size_/2; i <= WINDOW_WIDTH/2; i += mesh_size_)
+    for(float i = 0; i <= WINDOW_WIDTH/2; i += mesh_size_)
     {
         glVertex2f(i, -WINDOW_HEIGHT/2);
         glVertex2f(i, WINDOW_HEIGHT/2);
     }
+    for(float i = 0; i >= -WINDOW_WIDTH/2; i -= mesh_size_)
+    {
+        glVertex2f(i, -WINDOW_HEIGHT/2);
+        glVertex2f(i, WINDOW_HEIGHT/2);
+    }
+    glEnd();
+    glColor3f(0.15, 0.15, 0.15);
+    glLineWidth(2);
+    glBegin(GL_LINES);
+    glVertex2i(-400, 0);
+    glVertex2i(400, 0);
+    glVertex2i(0, -300);
+    glVertex2i(0, 300);
+
     glEnd();
 }
 
@@ -74,14 +94,78 @@ void Draw::drawMap(void)
     glPointSize(point_size);
     glColor3f(1.0, 1.0, 1.0);
     glBegin(GL_POINTS);
-    for(int i = -WINDOW_WIDTH/2; i < WINDOW_WIDTH/2; i += point_size)
+    // for(float i = -WINDOW_WIDTH/2 ; i < WINDOW_WIDTH/2; i += point_size)
+    // {
+    //     for(float j = -WINDOW_HEIGHT/2  ; j < WINDOW_HEIGHT/2; j+=point_size)
+    //     {
+    //         //将点从窗口像素坐标系映射到map坐标系
+    //         Point tmp;
+    //         tmp.x = int(window_center.x + i /point_size);
+    //         tmp.y = int(window_center.y + j /point_size);
+            
+    //         if(LifeGame::getMapStatus(tmp) == true)
+    //         {
+    //             glVertex2f(i,j);
+    //         }
+    //     }
+    // }
+    //第一象限
+    for(float i = point_size/2 ; i < WINDOW_WIDTH/2; i += point_size)
     {
-        for(int j = -WINDOW_HEIGHT/2; j < WINDOW_HEIGHT/2; j+=point_size)
+        for(float j = point_size/2  ; j < WINDOW_HEIGHT/2; j+=point_size)
         {
             //将点从窗口像素坐标系映射到map坐标系
             Point tmp;
-            tmp.x = int(window_center.x + i/point_size);
-            tmp.y = int(window_center.y + j/point_size);
+            tmp.x = int(window_center.x + i /point_size);
+            tmp.y = int(window_center.y + j /point_size);
+            
+            if(LifeGame::getMapStatus(tmp) == true)
+            {
+                glVertex2f(i,j);
+            }
+        }
+    }
+    //第二象限
+    for(float i = -point_size/2 ; i > -WINDOW_WIDTH/2; i -= point_size)
+    {
+        for(float j = point_size/2  ; j < WINDOW_HEIGHT/2; j+=point_size)
+        {
+            //将点从窗口像素坐标系映射到map坐标系
+            Point tmp;
+            tmp.x = int(window_center.x + i /point_size);
+            tmp.y = int(window_center.y + j /point_size);
+            
+            if(LifeGame::getMapStatus(tmp) == true)
+            {
+                glVertex2f(i,j);
+            }
+        }
+    }
+    //第三象限
+    for(float i = -point_size/2 ; i > -WINDOW_WIDTH/2; i -= point_size)
+    {
+        for(float j = -point_size/2  ; j > -WINDOW_HEIGHT/2; j-=point_size)
+        {
+            //将点从窗口像素坐标系映射到map坐标系
+            Point tmp;
+            tmp.x = int(window_center.x + i /point_size);
+            tmp.y = int(window_center.y + j /point_size);
+            
+            if(LifeGame::getMapStatus(tmp) == true)
+            {
+                glVertex2f(i,j);
+            }
+        }
+    }
+    //第四象限
+    for(float i = point_size/2 ; i < WINDOW_WIDTH/2; i += point_size)
+    {
+        for(float j = -point_size/2  ; j > -WINDOW_HEIGHT/2; j-=point_size)
+        {
+            //将点从窗口像素坐标系映射到map坐标系
+            Point tmp;
+            tmp.x = int(window_center.x + i /point_size);
+            tmp.y = int(window_center.y + j /point_size);
             
             if(LifeGame::getMapStatus(tmp) == true)
             {
@@ -113,17 +197,19 @@ void Draw::display(void)
 void Draw::onMouse(int button,int state,int x,int y)
 {
     //将鼠标坐标装换为左下角为
-    int i = x / point_size;
-    int j = (WINDOW_HEIGHT - y) / point_size;
+    float i = x / 1.0/ point_size;
+    float j = (WINDOW_HEIGHT - y)/1.0 / point_size;
     //讲鼠标坐标映射到map坐标系
-    int m = i - WINDOW_WIDTH / 2 / point_size + window_center.x;
-    int n = j - WINDOW_HEIGHT / 2 / point_size + window_center.y;
+    int m = i - WINDOW_WIDTH / 2.0 / point_size + window_center.x ;
+    int n = j - WINDOW_HEIGHT / 2.0 / point_size + window_center.y;
 
     if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
     {
         LifeGame::setMapStatus(m,n,true);
         left_down_flag = 1;
-        // std::cout << "MOUSE LEFT DOWN:(" << x << " " << y << ")" << std::endl;
+        std::cout << " SIZE:(" << point_size << " " << mesh_size << ")" << std::endl;
+        std::cout << "MOUSE LEFT DOWN:(" << i << " " << j << ")" << std::endl;
+        std::cout << "MAP(m,n):(" << m << " " << n << ")" << std::endl;
     }
     else
     {
@@ -165,7 +251,18 @@ void Draw::onMouse(int button,int state,int x,int y)
     }
     if(button == GLUT_WHEEL_DOWN && state == GLUT_DOWN)
     {
-        (zoom >= 0.5)? zoom-=0.1 : zoom = 0.4;
+        if((window_center.x - WINDOW_WIDTH/point_size/2 <= 0) ||
+           (window_center.y - WINDOW_HEIGHT/point_size/2 <= 0) || 
+           (window_center.x + WINDOW_WIDTH/point_size/2 >= WIDTH) ||
+           (window_center.y + WINDOW_HEIGHT/point_size/2 >= HEIGHT) )
+
+        {
+            zoom =zoom;
+        }
+        else
+        {
+            (zoom >= 0.5)? zoom-=0.1 : zoom = 0.4;
+        }
         point_size = POINT_SIZE * zoom;
         mesh_size = MESH_SIZE * zoom;
         // std::cout << zoom << std::endl;
@@ -174,10 +271,10 @@ void Draw::onMouse(int button,int state,int x,int y)
 
 void Draw::onMotion(int x, int y)
 {
-    int i = x / point_size;
-    int j = (WINDOW_HEIGHT - y) / point_size;
-    int m = i - WINDOW_WIDTH/2/point_size+window_center.x;
-    int n = j - WINDOW_HEIGHT/2/point_size+window_center.y;
+    float i = x /1.0/ point_size;
+    float j = (WINDOW_HEIGHT - y) /1.0/ point_size;
+    int m = i - WINDOW_WIDTH/2.0/point_size+window_center.x;
+    int n = j - WINDOW_HEIGHT/2.0/point_size+window_center.y;
 
     if(left_down_flag == 1)
     {
